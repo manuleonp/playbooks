@@ -1,6 +1,6 @@
 ---
 - name: Test connection to my servers
-  hosts: staging_ALL
+  hosts: ALL
   become: yes
 
   tasks:
