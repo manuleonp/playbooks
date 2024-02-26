@@ -1,8 +1,9 @@
 ---
-- name: Play Ping
-  hosts: all
+- main: Test connection to my servers
+  hosts: ALL
+  become: yes
 
   tasks:
-- name: Hacer un ping
-  ansible.builtin.ping:
-...
+  - name: Ping my servers
+    ping: 
+  ...  
