@@ -5,7 +5,7 @@
   tasks:
   - name: Crear un fichero vacío
     file:
-      path: "/tmp/ansible-prueba.txt"
+      path: "/tmp/awx-prueba.txt"
       state: "touch"
 
 
