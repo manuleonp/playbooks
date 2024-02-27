@@ -1,0 +1,9 @@
+---
+- name: Actualizar la lista de paquetes en todos los hosts Ubuntu
+  hosts: all
+  become: yes
+  tasks:
+    - name: Actualizar la lista de paquetes
+      ansible.builtin.apt:
+        update_cache: yes
+        cache_valid_time: 3600 # Actualiza la caché si tiene más de 1 hora
