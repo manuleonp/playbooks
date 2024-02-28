@@ -1,0 +1,35 @@
+- name: Verificar el estado detallado de las máquinas
+  hosts: all
+  gather_facts: no
+
+  tasks:
+    - name: Intentar hacer ping a las máquinas
+      ping:
+      register: ping_result
+      ignore_errors: yes
+
+    - name: Máquinas encendidas
+      debug:
+        msg: "La máquina {{ inventory_hostname }} está ENCENDIDA."
+      when: ping_result is success
+
+    - name: Máquinas apagadas o inaccesibles
+      debug:
+        msg: "La máquina {{ inventory_hostname }} está APAGADA o INACCESIBLE."
+      when: ping_result is failed
+
+    - name: Verificar el estado de la red para máquinas inaccesibles
+      local_action:
+        module: command
+        cmd: ping -c 3 {{ inventory_hostname }}
+      register: ping_check
+      ignore_errors: yes
+      when: ping_result is failed
+
+    - name: Mostrar resultado del ping para diagnóstico
+      debug:
+        msg: |
+          No se pudo acceder a {{ inventory_hostname }}.
+          Diagnóstico de red:
+          {{ ping_check.stdout_lines }}
+      when: ping_result is failed and ping_check is defined
