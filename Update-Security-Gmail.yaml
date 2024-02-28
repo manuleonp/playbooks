@@ -1,0 +1,42 @@
+---
+- name: Actualizar solo paquetes de seguridad en sistemas Linux y enviar notificación por correo
+  hosts: all
+  become: yes
+
+  vars:
+    gmail_username: "ifxsoc@gmail.com"
+    gmail_password: "yhxm knft umiy omcf"
+    mail_recipient: "nreyes@ifxcorp.com"
+    mail_subject: "Actualización de Seguridad Completada"
+
+  tasks:
+    - name: Actualizar solo paquetes de seguridad en sistemas basados en Debian (Ubuntu)
+      when: ansible_os_family == 'Debian'
+      apt:
+        name: '*'
+        state: latest
+        update_cache: yes
+        cache_valid_time: 3600
+        allow_unauthenticated: yes
+      register: debian_security_updates
+
+    - name: Actualizar solo paquetes de seguridad en sistemas basados en Red Hat (CentOS, RHEL)
+      when: ansible_os_family == 'RedHat'
+      yum:
+        name: '*'
+        security: yes
+        state: latest
+      register: redhat_security_updates
+
+    - name: Enviar notificación por correo usando Gmail
+      community.general.mail:
+        host: smtp.gmail.com
+        port: 587
+        username: "{{ gmail_username }}"
+        password: "{{ gmail_password }}"
+        to: "{{ mail_recipient }}"
+        subject: "{{ mail_subject }}"
+        body: "La actualización de seguridad ha sido completada satisfactoriamente."
+        from: "{{ gmail_username }}"
+        secure: starttls
+      delegate_to: localhost
